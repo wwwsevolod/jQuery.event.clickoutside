@@ -9,24 +9,24 @@
  * @type {Object}
  */
 (function($) {
-    var counter = 0;
-    var uniqueId = 0;
-    var containers = [];
-    var checker = function(event) {
+    var uniqueId = 0,
+        containers = [];
+
+    function checker(event) {
         var target = event.target;
-        var $container = $(this);
-        if ($container.find(target).length) {
+        var $this = $(this);
+        if ($this.find(target).length) {
             return;
         }
-        if ($container.is(target)) {
+        if ($this.is(target)) {
             return;
         }
-        $container.trigger('clickoutside');
-    };
+        $this.trigger('clickoutside');
+    }
 
     $.event.special.clickoutside = {
+        noBubble: true,
         setup: function() {
-            counter++;
             uniqueId++;
             containers.push(this);
             containers.push(uniqueId);
@@ -37,7 +37,6 @@
             if (index == -1) {
                 return;
             }
-            counter--;
             var uniqueIdOfElement = containers[index + 1];
             containers.splice(index, 2);
             $('body').unbind('click.clickoutsideHelper' + uniqueIdOfElement);
