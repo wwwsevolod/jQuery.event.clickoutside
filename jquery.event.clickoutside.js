@@ -9,10 +9,12 @@
  * @type {Object}
  */
 (function($) {
-    var containers;
-
-    var checker = function(container, target) {
-        var $container = $(container);
+    var counter = 0;
+    var uniqueId = 0;
+    var containers = [];
+    var checker = function(event) {
+        var target = event.target;
+        var $container = $(this);
         if ($container.find(target).length) {
             return;
         }
@@ -22,32 +24,23 @@
         $container.trigger('clickoutside');
     };
 
-    var clickHandler = function(e) {
-        if (!containers.length) {
-            return;
-        }
-        for (var n = 0; n < containers.length; n++) {
-            checker(containers[n], e.target);
-        }
-    };
-
     $.event.special.clickoutside = {
         setup: function() {
-            containers = [];
-            $('body').bind('click.clickoutside', clickHandler);
-        },
-        add: function() {
+            counter++;
+            uniqueId++;
             containers.push(this);
-        },
-        remove: function() {
-            var index = $.inArray(this, containers);
-            if (index !== -1) {
-                containers.splice(index, 1);
-            }
+            containers.push(uniqueId);
+            $('body').bind('click.clickoutsideHelper' + uniqueId, jQuery.proxy(checker, this));
         },
         teardown: function() {
-            containers = null;
-            $('body').unbind('click.clickoutside', clickHandler);
+            var index = jQuery.inArray(containers, this);
+            if (index == -1) {
+                return;
+            }
+            counter--;
+            var uniqueIdOfElement = containers[index + 1];
+            containers.splice(index, 2);
+            $('body').unbind('click.clickoutsideHelper' + uniqueIdOfElement);
         }
     };
 })(jQuery);
