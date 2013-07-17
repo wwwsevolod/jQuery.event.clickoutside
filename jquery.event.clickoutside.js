@@ -8,35 +8,11 @@
  * @author vivanov <www@sevolod.ru>
  * @type {Object}
  */
-jQuery.event.special.clickoutside = {
-    setup: function() {
-        jQuery.event.special.clickoutside.containers = [];
-        jQuery('body').bind('click.clickoutside', jQuery.event.special.clickoutside.handler);
-    },
-    add: function() {
-        jQuery.event.special.clickoutside.containers.push(this);
-    },
-    remove: function() {
-        var index = jQuery.inArray(this, jQuery.event.special.clickoutside.containers);
-        if (index !== -1) {
-            jQuery.event.special.clickoutside.containers.splice(index, 1);
-        }
-    },
-    teardown: function() {
-        jQuery.event.special.clickoutside.containers = null;
-        jQuery('body').unbind('click.clickoutside', jQuery.event.special.clickoutside.handler);
-    },
-    handler: function(e) {
-        var arr = jQuery.event.special.clickoutside.containers;
-        if (!arr) {
-            return;
-        }
-        for (var n = 0; n < arr.length; n++) {
-            jQuery.event.special.clickoutside.checkAndTrigger(arr[n], e.target);
-        }
-    },
-    checkAndTrigger: function(container, target) {
-        var $container = jQuery(container);
+(function($) {
+    var containers;
+
+    var checker = function(container, target) {
+        var $container = $(container);
         if ($container.find(target).length) {
             return;
         }
@@ -45,4 +21,33 @@ jQuery.event.special.clickoutside = {
         }
         $container.trigger('clickoutside');
     }
-}
+
+    var clickHandler = function(e) {
+        if (!containers.length) {
+            return;
+        }
+        for (var n = 0; n < arr.length; n++) {
+            checker(arr[n], e.target);
+        }
+    }
+
+    $.event.special.clickoutside = {
+        setup: function() {
+            containers = [];
+            $('body').bind('click.clickoutside', clickHandler);
+        },
+        add: function() {
+            containers.push(this);
+        },
+        remove: function() {
+            var index = $.inArray(this, containers);
+            if (index !== -1) {
+                containers.splice(index, 1);
+            }
+        },
+        teardown: function() {
+            containers = null;
+            $('body').unbind('click.clickoutside', clickHandler);
+        }
+    }
+})(jQuery);
