@@ -20,7 +20,7 @@
             return;
         }
         $container.trigger('clickoutside');
-    }
+    };
 
     var clickHandler = function(e) {
         if (!containers.length) {
@@ -29,7 +29,7 @@
         for (var n = 0; n < arr.length; n++) {
             checker(arr[n], e.target);
         }
-    }
+    };
 
     $.event.special.clickoutside = {
         setup: function() {
@@ -49,5 +49,5 @@
             containers = null;
             $('body').unbind('click.clickoutside', clickHandler);
         }
-    }
+    };
 })(jQuery);
