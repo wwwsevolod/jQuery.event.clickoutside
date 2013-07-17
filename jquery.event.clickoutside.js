@@ -26,8 +26,8 @@
         if (!containers.length) {
             return;
         }
-        for (var n = 0; n < arr.length; n++) {
-            checker(arr[n], e.target);
+        for (var n = 0; n < containers.length; n++) {
+            checker(containers[n], e.target);
         }
     };
 
